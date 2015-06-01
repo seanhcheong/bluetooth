@@ -5,9 +5,7 @@ import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-/**
- * Created by lt on 5/31/15.
- */
+
 public class PairedList extends Activity {
     ListView viewOfList;
     String[] pairs;

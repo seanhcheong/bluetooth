@@ -60,6 +60,14 @@ public class MainActivity extends ActionBarActivity {
         }
     };
 
+    // Broadcast receiver for discovering devices
+    final BroadcastReceiver discoveryResult = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            BluetoothDevice remoteDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,6 +81,18 @@ public class MainActivity extends ActionBarActivity {
         } else {
             info.setText("Bluetooth is off");
         }
+
+        // Discovering portion
+
+        //This broadcast is sent when a device has been found...
+        registerReceiver(discoveryResult, new IntentFilter(BluetoothDevice.ACTION_FOUND));
+        //Start discovery functionality...
+        BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
+        if(adapter != null && adapter.isDiscovering()){
+            adapter.cancelDiscovery();
+        }
+        adapter.startDiscovery();
+
 
         connector.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,6 +115,11 @@ public class MainActivity extends ActionBarActivity {
                 Intent in = new Intent("pair_filter");
                 in.putExtras(funBundle);
                 startActivity(in);
+                // Enable Discovery
+                Intent discoverable = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+                startActivityForResult(discoverable, 0);
+
+
 
 
             }
@@ -107,6 +132,8 @@ public class MainActivity extends ActionBarActivity {
             }
         });
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
